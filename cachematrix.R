@@ -98,3 +98,25 @@ best <- function(state, autcome) {
         f2<-subset(f1,f1$"pneumonia"==ff1)
         print(f2$"Hospital.Name")
 }
+
+rankhospita-4-draft
+rankhospital <- function(state, autcome,rank=i) {
+        # Read outcome data
+        outcome <- read.csv("outcome-of-care-measures.csv",colClasses = "character") #第二引数があることでNAに持ち込める
+        out1<-outcome[,c(2,7,11,17,23)]
+        names(out1)[3:5]<-c("heart attack","heart failure","pneumonia")
+        out1$"heart attack"<-as.numeric(out1$"heart attack")
+        out1$"heart failure"<-as.numeric(out1$"heart failure")
+        out1$"pneumonia"<-as.numeric(out1$"pneumonia")
+        out2<-complete.cases(out1)
+        out3<-out1[out2,] ##欠損値を除いた表
+        ss1<-split(out3,out3$"State") ## このStateは引数のstateではない。第一引数で州ごとの化
+        ss2<-ss1$NY ## 分割した州のみを抜き出す
+        ord1<-order(ss2$"heart attack",ss2$"Hospital.Name",decreasing = FALSE)
+        ord2<-ss2[ord1,] ##　任意のRateを昇順にした表
+        ran<-ord2[rank,1]
+        aaa<-if( ran == "NA"){
+                stop("invalid number")
+        }else{ print(ran) }
+        
+}
