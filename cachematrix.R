@@ -120,3 +120,20 @@ rankhospital <- function(state, autcome,rank=i) {
         }else{ print(ran) }
         
 }
+rankall
+rankall <- function(autcome,num=i) {
+        # Read outcome data
+        outcome <- read.csv("outcome-of-care-measures.csv",colClasses = "character") #第二引数があることでNAに持ち込める
+        out1<-outcome[,c(2,7,11,17,23)]
+        names(out1)[1:5]<-c("hospital","state","heart attack","heart failure","pneumonia")
+        out1$"heart attack"<-as.numeric(out1$"heart attack")
+        out1$"heart failure"<-as.numeric(out1$"heart failure")
+        out1$"pneumonia"<-as.numeric(out1$"pneumonia")
+        out2<-complete.cases(out1)
+        out3<-out1[out2,] ##欠損値を除いた表
+        ord1<-order(out3$"heart attack",out3$"hospitl",decreasing = FALSE)
+        ord2<-out3[ord1,] ##　任意のRateを昇順にした表
+        ran<-ord2[1:num,1:2]
+        ran
+        
+}   
