@@ -62,3 +62,39 @@ est <- function(state, autcome) {
         f2<-subset(f1,f1$"heart attack"==min(f1$"heart attack"))
         f2$"Hospital.Name"
 }
+best-3
+best <- function(state, autcome) {
+        # Read outcome data
+        outcome <- read.csv("outcome-of-care-measures.csv",colClasses = "character") #第二引数があることでNAに持ち込める
+        out1<-outcome[,c(2,7,11,17,23)]
+        names(out1)[3:5]<-c("heart attack","heart failure","pneumonia")
+        out1$"heart attack"<-as.numeric(out1$"heart attack")
+        out1$"heart failure"<-as.numeric(out1$"heart failure")
+        out1$"pneumonia"<-as.numeric(out1$"pneumonia")
+        out2<-complete.cases(out1)
+        out3<-out1[out2,]
+        f<-split(out3,out3$"State") ##このStateは引数のstateではない。
+        f1<-f$NN ##第一引数のstate。これから、各州を選んでくる。ここがうまく動いていない
+        ff1<-if(min(f1[,5]) == "Inf"){
+                stop("invalid state")
+        }else{stop(min(f1[,5]))}
+}
+
+best-2
+best <- function(state, autcome) {
+        # Read outcome data
+        outcome <- read.csv("outcome-of-care-measures.csv",colClasses = "character") #第二引数があることでNAに持ち込める
+        out1<-outcome[,c(2,7,11,17,23)]
+        names(out1)[3:5]<-c("heart attack","heart failure","pneumonia")
+        out1$"heart attack"<-as.numeric(out1$"heart attack")
+        out1$"heart failure"<-as.numeric(out1$"heart failure")
+        out1$"pneumonia"<-as.numeric(out1$"pneumonia")
+        out2<-complete.cases(out1)
+        out3<-out1[out2,]
+        f<-split(out3,out3$"State") ##このStateは引数のstateではない。
+        f1<-f$NN ##第一引数のstate。これから、各州を選んでくる。ここがうまく動いていない
+        ff1<-min(f1[,5])
+        names(f1$"pneumonia")
+        f2<-subset(f1,f1$"pneumonia"==ff1)
+        print(f2$"Hospital.Name")
+}
