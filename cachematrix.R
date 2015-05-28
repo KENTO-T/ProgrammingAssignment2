@@ -137,3 +137,15 @@ rankall <- function(autcome,num=i) {
         ran
         
 }   
+rankall.draft
+rankall <- function(autcome,num = i) {
+        # Read outcome data
+        outcome <- read.csv("outcome-of-care-measures.csv",stringsAsFactors = F , na.strings = "Not Available") #第二引数があることでNAに持ち込める
+        outcome$"heart attack"<-as.numeric(outcome$"heart attack")
+        outcome$"heart failure"<-as.numeric(outcome$"heart failure")
+        outcome$"pneumonia"<-as.numeric(outcome$"pneumonia")
+        outcome$"Hospital.Name"<-as.character(outcome$"Hospital.Name")
+        outcome$"State"<-as.character(outcome$"State")
+        out1<-outcome[,c(2,7,11,17,23)]
+        names(out1)[1:5]<-c("hospital","state","heart attack","heart failure","pneumonia")
+}
