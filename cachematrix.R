@@ -186,3 +186,65 @@ cacheSolve <- function(x, ...) {
     x$setInverse(invMatrix)
     invMatrix
 }
+
+rm(list = ls())
+
+
+data.in <- read.table(file = "In/crx.data", header = FALSE, sep = ",", na.string = "?")
+
+print(paste0("# of rows    in data : ", nrow(data.in)))
+print(paste0("# of columns in data : ", ncol(data.in)))
+
+
+data.in <- data.in[complete.cases(data.in), ]
+print(paste0("# of rows after omitting NA : ", nrow(data.in)))
+
+temp.obj <- ifelse(data.in["V16"] == "+", 1, 0)
+data.in["V16"] <- temp.obj
+
+set.seed(100)
+index.learn <- sample(1:nrow(data.in), size = as.integer(0.7 * nrow(data.in)), replace = FALSE)
+
+data.learn <- data.in[sort(index.learn), ]
+data.valid <- data.in[- index.learn, ]
+
+# res.glm <- glm(V16 ~ ., family = binomial, data = data.learn)
+init.glm <- glm(V16 ~ V9, family = binomial, data = data.learn)
+res.glm <- stepAIC(init.glm, scope = V16 ~ V1 + V2 + V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13 + V14 + V15)
+summary(res.glm)
+
+obj.learn <- as.vector(data.learn[, 16])
+obj.valid <- as.vector(data.valid[, 16])
+
+score.learn <- predict(res.glm, type = "response")
+score.valid <- predict(res.glm, newdata = data.valid, type = "response")
+
+
+
+calc.AR <- function(obj, score){
+  
+  # CAP lines
+  i.score <- order(score, decreasing = TRUE)
+  
+  obj.sort <- obj[i.score]
+  cumsum.obj <- cumsum(obj.sort)
+  
+  plot(cumsum.obj, type = "l", col = "red")
+  
+  i.obj <- order(obj, decreasing = TRUE)
+  
+  obj.sort.ideal <- obj[i.obj]
+  cumsum.obj.ideal <- cumsum(obj.sort.ideal)
+
+  lines(cumsum.obj.ideal, col = "blue")
+  
+  cumsum.obj.idiot <- cumsum(rep(sum(obj)/length(obj), length.out = length(obj)))
+  
+  lines(cumsum.obj.idiot, col = "black")
+  
+  # calculate AR
+  res <- sum(cumsum.obj - cumsum.obj.idiot) / sum(cumsum.obj.ideal - cumsum.obj.idiot)
+  
+  return(res)
+}
+
